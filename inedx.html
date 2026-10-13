@@ -1,0 +1,1667 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KPMG Student Analytics</title>
+
+<style>
+:root {
+  --navy:#14213d;
+  --blue:#3563e9;
+  --bg:#f4f7fc;
+  --green:#16845b;
+  --red:#cf414b;
+  --amber:#bd7810;
+  --border:#e3e8f2;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:var(--navy);
+}
+button,input,select,textarea { font:inherit; }
+button {
+  border:0;
+  border-radius:8px;
+  padding:11px 16px;
+  background:var(--blue);
+  color:white;
+  cursor:pointer;
+}
+button:hover { opacity:.9; }
+button:disabled { opacity:.55; cursor:not-allowed; }
+input,select,textarea {
+  width:100%;
+  padding:11px;
+  margin:7px 0 15px;
+  border:1px solid var(--border);
+  border-radius:8px;
+}
+input[type="radio"] { width:auto; margin:0; }
+label { font-size:13px; font-weight:bold; }
+.hidden { display:none!important; }
+.note,.muted { font-size:12px; color:#6b7280; line-height:1.6; }
+
+.auth-screen {
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:25px;
+  background:linear-gradient(135deg,#e8efff,#f8faff);
+}
+.auth-box {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:950px;
+  max-width:100%;
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 15px 45px #14213d20;
+}
+.auth-intro {
+  background:var(--navy);
+  color:white;
+  padding:40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.logo { font-size:23px; font-weight:bold; margin-bottom:25px; }
+.auth-intro h1 { line-height:1.35; }
+.auth-intro p { color:#d9e3ff; line-height:1.7; }
+.feature { margin-top:13px; color:#edf2ff; }
+.auth-form { padding:35px; }
+.auth-tabs { display:flex; gap:10px; margin-bottom:25px; }
+.auth-tabs button { flex:1; background:#edf1fb; color:var(--navy); }
+.auth-tabs button.active { background:var(--blue); color:white; }
+.primary { width:100%; }
+
+.topbar {
+  background:var(--navy);
+  color:white;
+  padding:17px 25px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  flex-wrap:wrap;
+}
+.topbar h2 { margin:0; font-size:20px; }
+.topbar button { background:#ffffff20; border:1px solid #ffffff55; }
+
+.layout {
+  display:grid;
+  grid-template-columns:225px minmax(0,1fr);
+  min-height:calc(100vh - 65px);
+}
+.sidebar {
+  background:white;
+  border-right:1px solid var(--border);
+  padding:18px 12px;
+}
+.sidebar button {
+  display:block;
+  width:100%;
+  text-align:left;
+  background:transparent;
+  color:var(--navy);
+  margin-bottom:7px;
+}
+.sidebar button.active,.sidebar button:hover {
+  background:#eaf0ff;
+  color:var(--blue);
+}
+main { padding:25px; min-width:0; }
+.page { display:none; }
+.page.active { display:block; }
+
+.heading {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+.heading p { color:#6b7280; }
+.grid {
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:15px;
+  margin-bottom:20px;
+}
+.two {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:18px;
+}
+.card {
+  background:white;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:18px;
+  min-width:0;
+  box-shadow:0 4px 14px #14213d08;
+}
+.card h3 { margin-top:0; }
+.metric-label { font-size:13px; color:#6b7280; }
+.metric-value { font-size:27px; font-weight:bold; margin:12px 0; }
+.progress {
+  height:9px;
+  border-radius:20px;
+  background:#e9edf5;
+  overflow:hidden;
+  margin:10px 0 18px;
+}
+.progress span {
+  display:block;
+  height:100%;
+  background:var(--blue);
+}
+.bar-label {
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  gap:10px;
+}
+.table-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th,td {
+  padding:12px 10px;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+}
+th { background:#f7f9fd; }
+.status {
+  display:inline-block;
+  border-radius:20px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:bold;
+}
+.good { color:var(--green); background:#e5f7ee; }
+.warning { color:var(--amber); background:#fff3dc; }
+.danger { color:var(--red); background:#ffe8e9; }
+.form-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+footer { text-align:center; color:#6b7280; font-size:12px; padding:20px; }
+.small-button { padding:7px 10px; font-size:12px; }
+.click-card { cursor:pointer; transition:transform .15s,border-color .15s; }
+.click-card:hover { transform:translateY(-3px); border-color:var(--blue); }
+.activity-icon { font-size:30px; margin-bottom:10px; }
+.question-box {
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:16px;
+  margin:15px 0;
+  background:#fff;
+}
+.option-label {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:normal;
+  font-size:14px;
+  margin:12px 0;
+}
+.option-label input { width:auto; margin:0; }
+.info-line {
+  padding:10px;
+  background:#f7f9fd;
+  border-radius:8px;
+  margin:8px 0;
+  font-size:13px;
+}
+.red-flag-row { background:#fff0f0; }
+.red-flag-text { color:var(--red); font-size:12px; margin:6px 0; }
+.student-link {
+  padding:0;
+  margin:0;
+  color:var(--blue);
+  background:transparent;
+  text-decoration:underline;
+  font-weight:bold;
+}
+.student-link:hover { opacity:.75; }
+.detail-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.detail-item {
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:9px;
+  background:#f9faff;
+}
+.detail-item .metric-value { font-size:22px; }
+.flag-reason {
+  border-left:4px solid var(--red);
+  background:#fff0f0;
+  padding:12px;
+  border-radius:6px;
+  margin:8px 0;
+  color:#a3212b;
+  font-size:13px;
+}
+@media(max-width:900px) {
+  .layout { grid-template-columns:1fr; }
+  .sidebar { display:flex; overflow-x:auto; gap:5px; }
+  .sidebar button { width:auto; white-space:nowrap; }
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .detail-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:600px) {
+  .auth-box { grid-template-columns:1fr; }
+  .auth-intro,.auth-form { padding:25px; }
+  .two,.form-grid,.grid,.detail-grid { grid-template-columns:1fr; }
+  main { padding:15px; }
+}
+</style>
+</head>
+
+<body>
+
+<section id="authScreen" class="auth-screen">
+  <div class="auth-box">
+    <div class="auth-intro">
+      <div class="logo">KPMG Student Analytics</div>
+      <h1>Unlock Every Student's Potential</h1>
+      <p>An analytics platform to monitor academic performance, attendance, engagement, skills and placement readiness.</p>
+      <div class="feature">📊 CGPA, marks and subject performance</div>
+      <div class="feature">📅 Overall and subject-wise attendance</div>
+      <div class="feature">💻 LMS and assignment completion</div>
+      <div class="feature">🌟 Events, clubs and hackathons</div>
+      <div class="feature">🎯 Assessments with deadlines</div>
+      <div class="feature">🧠 Mock, coding and aptitude tests</div>
+      <div class="feature">🚩 Academic red-flag monitoring</div>
+      <div class="feature">💬 Student and faculty feedback</div>
+    </div>
+
+    <div class="auth-form">
+      <div class="auth-tabs">
+        <button id="loginTab" class="active" onclick="setMode('login')">Login</button>
+        <button id="registerTab" onclick="setMode('register')">Register</button>
+      </div>
+
+      <form id="loginForm">
+        <h2>Welcome Back!</h2>
+        <p class="note">Login to continue to your dashboard.</p>
+        <label>Email Address</label>
+        <input id="loginEmail" type="email" required placeholder="Enter your email">
+        <label>Password</label>
+        <input id="loginPassword" type="password" required placeholder="Enter your password">
+        <button class="primary" type="submit">Login to Dashboard</button>
+        <p class="note">Don't have an account? Select Register above.</p>
+      </form>
+
+      <form id="registerForm" class="hidden">
+        <h2>Create Account</h2>
+        <p class="note">Join Student Success Intelligence.</p>
+        <label>Full Name</label>
+        <input id="regName" required placeholder="Enter your name">
+        <label>Email Address</label>
+        <input id="regEmail" type="email" required placeholder="Enter your email">
+        <label>Select Role</label>
+        <select id="regRole">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="management">Management</option>
+        </select>
+        <div id="studentIdBox">
+          <label>Student ID / Roll Number</label>
+          <input id="regStudentId" placeholder="S101 to S106">
+        </div>
+        <label>Password</label>
+        <input id="regPassword" type="password" minlength="8" required>
+        <label>Confirm Password</label>
+        <input id="regConfirm" type="password" minlength="8" required>
+        <button class="primary" type="submit">Create Account</button>
+        <p class="note">Demo only: account information is stored in the application database.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<div id="app" class="hidden">
+  <header class="topbar">
+    <h2>KPMG Student Analytics</h2>
+    <div><span id="welcome"></span> <button onclick="logout()">Logout</button></div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" id="sidebar">
+      <button data-page="dashboard" onclick="showPage('dashboard',this)">🏠 Dashboard</button>
+      <button data-page="academics" onclick="showPage('academics',this)">📚 Academic Performance</button>
+      <button data-page="attendance" onclick="showPage('attendance',this)">📅 Attendance</button>
+      <button data-page="lms" onclick="showPage('lms',this)">💻 LMS Activity</button>
+      <button data-page="engagement" onclick="showPage('engagement',this)">🌟 Engagement</button>
+      <button data-page="placement" onclick="showPage('placement',this)">🎯 Placement Readiness</button>
+      <button data-page="skills" onclick="showPage('skills',this)">🧠 Skills Assessment</button>
+      <button data-page="feedback" onclick="showPage('feedback',this)">💬 Feedback</button>
+      <button data-page="record" onclick="showPage('record',this)">📝 Record Attendance</button>
+      <button data-page="summary" onclick="showPage('summary',this)">👩‍🏫 Student Summary</button>
+      <button data-page="management" onclick="showPage('management',this)">📈 Management Analytics</button>
+    </aside>
+
+    <main>
+      <section id="dashboard" class="page active">
+        <div class="heading">
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p>Monitor academic progress and student success indicators.</p>
+          </div>
+          <span id="roleBadge" class="status good">Student View</span>
+        </div>
+
+        <div class="grid">
+          <div class="card"><div class="metric-label">Current CGPA</div><div id="cgpa" class="metric-value">9.20</div><span class="muted">Academic performance</span></div>
+          <div class="card"><div class="metric-label">Average Marks</div><div id="marks" class="metric-value">88%</div><span class="muted">Assessment results</span></div>
+          <div class="card"><div class="metric-label">Overall Attendance</div><div id="attendanceValue" class="metric-value">94%</div><span class="muted">Class participation</span></div>
+          <div class="card"><div class="metric-label">Backlogs</div><div id="backlogs" class="metric-value">0</div><span class="muted">Pending subjects</span></div>
+        </div>
+
+        <div class="grid">
+          <div class="card"><div class="metric-label">LMS Logins This Week</div><div class="metric-value">12</div></div>
+          <div class="card"><div class="metric-label">Assignments Completed</div><div class="metric-value">90%</div></div>
+          <div class="card"><div class="metric-label">Coding Score</div><div class="metric-value">78%</div></div>
+          <div class="card"><div class="metric-label">Student Satisfaction</div><div class="metric-value">4.2/5</div></div>
+        </div>
+
+        <div class="two">
+          <div class="card">
+            <h3>Academic Progress</h3>
+            <div class="bar-label"><span>Internal Marks</span><b>85%</b></div>
+            <div class="progress"><span style="width:85%"></span></div>
+            <div class="bar-label"><span>Assignments</span><b>90%</b></div>
+            <div class="progress"><span style="width:90%"></span></div>
+            <div class="bar-label"><span>Practice Tests</span><b>78%</b></div>
+            <div class="progress"><span style="width:78%"></span></div>
+          </div>
+          <div class="card">
+            <h3>Student Success Insights</h3>
+            <p id="insight">Keep attending classes and practising regularly.</p>
+            <span id="risk" class="status good">Progress looks positive</span>
+            <p class="note">This demonstration uses sample data.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="academics" class="page">
+        <h1>Academic Performance</h1>
+        <p>CGPA, marks, backlogs and subject-wise performance.</p>
+        <div class="grid">
+          <div class="card"><div class="metric-label">CGPA</div><div id="academicCGPA" class="metric-value">9.20</div></div>
+          <div class="card"><div class="metric-label">Average Marks</div><div id="academicMarks" class="metric-value">88%</div></div>
+          <div class="card"><div class="metric-label">Backlogs</div><div id="academicBacklogs" class="metric-value">0</div></div>
+          <div class="card"><div class="metric-label">Subjects Tracked</div><div class="metric-value">5</div></div>
+        </div>
+        <div class="card table-wrap">
+          <h3>Subject Performance</h3>
+          <table>
+            <thead><tr><th>Subject</th><th>Marks</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody id="subjectTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="attendance" class="page">
+        <h1>Attendance Monitoring</h1>
+        <p>View overall and subject-wise attendance.</p>
+        <div class="grid">
+          <div class="card"><div class="metric-label">Overall Attendance</div><div id="overallAttendance" class="metric-value">94%</div></div>
+          <div class="card"><div class="metric-label">Subjects Tracked</div><div class="metric-value">5</div></div>
+          <div class="card"><div class="metric-label">Minimum Target</div><div class="metric-value">75%</div></div>
+          <div class="card"><div class="metric-label">Attendance Status</div><div id="attendanceStatus" class="metric-value">On Track</div></div>
+        </div>
+        <div class="card table-wrap">
+          <h3>Subject-wise Attendance</h3>
+          <table>
+            <thead><tr><th>Subject</th><th>Present</th><th>Total Classes</th><th>Percentage</th><th>Status</th></tr></thead>
+            <tbody id="attendanceTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="lms" class="page">
+        <h1>LMS Activity</h1>
+        <p>Learning Management System login frequency and assignment completion.</p>
+        <div class="grid">
+          <div class="card"><div class="metric-label">Logins This Week</div><div class="metric-value">12</div></div>
+          <div class="card"><div class="metric-label">Active Learning Days</div><div class="metric-value">5</div></div>
+          <div class="card"><div class="metric-label">Assignments Completed</div><div class="metric-value">90%</div></div>
+          <div class="card"><div class="metric-label">Resources Completed</div><div class="metric-value">18</div></div>
+        </div>
+        <div class="card">
+          <h3>Assignment Completion</h3>
+          <div class="bar-label"><span>Completed assignments</span><b>90%</b></div>
+          <div class="progress"><span style="width:90%"></span></div>
+          <div class="bar-label"><span>Quiz completion</span><b>86%</b></div>
+          <div class="progress"><span style="width:86%"></span></div>
+          <h3>Recommendations</h3>
+          <ul>
+            <li>Check learning materials regularly.</li>
+            <li>Complete assignments before deadlines.</li>
+            <li>Practise quizzes and review missed questions.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="engagement" class="page">
+        <h1>Student Engagement</h1>
+        <p>Click a category to explore activities and opportunities.</p>
+        <div id="engagementCategories" class="grid">
+          <div class="card click-card" onclick="openEngagement('events')"><div class="activity-icon">🎤</div><h3>Events</h3><p>Workshops, seminars and college events.</p><span class="status good">Explore events →</span></div>
+          <div class="card click-card" onclick="openEngagement('clubs')"><div class="activity-icon">🤝</div><h3>Clubs</h3><p>Join technical and cultural communities.</p><span class="status good">Explore clubs →</span></div>
+          <div class="card click-card" onclick="openEngagement('hackathons')"><div class="activity-icon">💡</div><h3>Hackathons</h3><p>Build projects and solve challenges.</p><span class="status good">Explore hackathons →</span></div>
+          <div class="card click-card" onclick="openEngagement('certifications')"><div class="activity-icon">🏅</div><h3>Certifications</h3><p>Discover courses to develop your skills.</p><span class="status good">Explore courses →</span></div>
+        </div>
+        <div id="engagementDetails" class="hidden">
+          <div class="heading">
+            <div><h2 id="engagementTitle">Activities</h2><p id="engagementDescription"></p></div>
+            <button onclick="closeEngagement()">← Back to categories</button>
+          </div>
+          <div id="engagementItems" class="grid"></div>
+          <div class="card"><h3>Participation Note</h3><p class="muted">These are sample opportunities. Contact your college coordinator for actual dates, registrations and eligibility.</p></div>
+        </div>
+      </section>
+
+      <section id="placement" class="page">
+        <h1>Placement Readiness</h1>
+        <p>Aptitude, coding and mock interview performance.</p>
+        <div class="grid">
+          <div class="card"><div class="metric-label">Aptitude Score</div><div class="metric-value">82%</div><div class="progress"><span style="width:82%"></span></div></div>
+          <div class="card"><div class="metric-label">Coding Score</div><div class="metric-value">78%</div><div class="progress"><span style="width:78%"></span></div></div>
+          <div class="card"><div class="metric-label">Mock Interviews</div><div class="metric-value">4</div></div>
+          <div class="card"><div class="metric-label">Interview Performance</div><div class="metric-value">75%</div><div class="progress"><span style="width:75%"></span></div></div>
+        </div>
+        <div class="card">
+          <h3>Suggested Next Steps</h3>
+          <ul>
+            <li>Practise quantitative aptitude and logical reasoning.</li>
+            <li>Solve coding problems and learn data structures.</li>
+            <li>Attend mock technical and HR interviews.</li>
+            <li>Build projects and prepare a resume.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="skills" class="page">
+        <div class="heading">
+          <div><h1>Skills Assessment</h1><p>Improve your skills and complete tests before their deadlines.</p></div>
+        </div>
+
+        <div class="two">
+          <div class="card">
+            <h3>Technical Skills</h3>
+            <div class="bar-label"><span>Programming</span><b>75%</b></div><div class="progress"><span style="width:75%"></span></div>
+            <div class="bar-label"><span>Problem Solving</span><b>70%</b></div><div class="progress"><span style="width:70%"></span></div>
+            <div class="bar-label"><span>Data Analysis</span><b>72%</b></div><div class="progress"><span style="width:72%"></span></div>
+            <div class="bar-label"><span>Project Development</span><b>80%</b></div><div class="progress"><span style="width:80%"></span></div>
+          </div>
+          <div class="card">
+            <h3>Soft Skills</h3>
+            <div class="bar-label"><span>Communication</span><b>80%</b></div><div class="progress"><span style="width:80%"></span></div>
+            <div class="bar-label"><span>Teamwork</span><b>85%</b></div><div class="progress"><span style="width:85%"></span></div>
+            <div class="bar-label"><span>Leadership</span><b>70%</b></div><div class="progress"><span style="width:70%"></span></div>
+            <div class="bar-label"><span>Time Management</span><b>75%</b></div><div class="progress"><span style="width:75%"></span></div>
+          </div>
+        </div>
+
+        <div id="skillTestCategories" class="grid">
+          <div class="card click-card" onclick="openSkillTests('mock')">
+            <div class="activity-icon">📝</div><h3>Mock Tests</h3>
+            <p>Practise aptitude, logical reasoning, technical MCQs and interview questions.</p>
+            <span class="status good">Explore Mock Tests →</span>
+          </div>
+          <div class="card click-card" onclick="openSkillTests('coding')">
+            <div class="activity-icon">💻</div><h3>Coding Tests</h3>
+            <p>Practise programming questions and improve problem-solving skills.</p>
+            <span class="status good">Explore Coding Tests →</span>
+          </div>
+          <div class="card click-card" onclick="openSkillTests('aptitude')">
+            <div class="activity-icon">🧮</div><h3>Aptitude Test</h3>
+            <p>Practise numerical ability, logical reasoning and problem-solving.</p>
+            <span class="status good">Explore Aptitude Tests →</span>
+          </div>
+        </div>
+
+        <div id="skillTestDetails" class="hidden">
+          <div class="heading">
+            <div><h2 id="skillTestTitle">Tests</h2><p id="skillTestDescription"></p></div>
+            <button type="button" onclick="closeSkillTests()">← Back to Skills</button>
+          </div>
+          <div id="skillTestList" class="grid"></div>
+        </div>
+
+        <div id="skillTestWorkspace" class="card hidden">
+          <div class="heading">
+            <div><h2 id="workspaceTitle">Test</h2><p id="workspaceDescription"></p></div>
+            <button type="button" onclick="closeTestWorkspace()">← Back to Tests</button>
+          </div>
+          <div id="workspaceContent"></div>
+        </div>
+
+        <div id="managementAssessmentTools" class="hidden">
+          <div class="card">
+            <h2>➕ Post a New Assessment</h2>
+            <p class="muted">Management can create a three-question multiple-choice test and set its deadline.</p>
+            <form id="createAssessmentForm">
+              <label>Assessment Title</label><input id="testTitle" required placeholder="Example: Python Programming Test">
+              <label>Description / Instructions</label><textarea id="testDescription" rows="2" required placeholder="Enter test instructions"></textarea>
+              <label>Submission Deadline</label><input id="testDeadline" type="datetime-local" required>
+              <div id="questionInputs"></div>
+              <button type="submit">Publish Assessment</button>
+            </form>
+          </div>
+          <div class="card"><h3>Posted Assessments and Submissions</h3><div id="managementAssessmentList"></div></div>
+        </div>
+
+        <div id="studentAssessmentArea">
+          <div class="card"><h2>📝 Available Assessments</h2><p class="muted">Tests posted by management appear here with their deadlines and submission status.</p><div id="studentAssessmentList"></div></div>
+        </div>
+
+        <div id="takeAssessmentCard" class="card hidden">
+          <div class="heading">
+            <div><h2 id="takeTestTitle">Assessment</h2><p id="takeTestDescription"></p></div>
+            <button type="button" onclick="cancelAssessment()">← Back</button>
+          </div>
+          <div class="info-line" id="takeTestDeadline"></div>
+          <form id="takeAssessmentForm"><div id="testQuestions"></div><button type="submit">Submit Assessment</button></form>
+          <p class="note">Once submitted, your answers cannot be changed in this demo.</p>
+        </div>
+
+        <div class="card" id="studentResultsCard"><h3>My Assessment Results</h3><div id="studentResults"></div></div>
+      </section>
+
+      <section id="feedback" class="page">
+        <h1>Student Satisfaction & Faculty Feedback</h1>
+        <p>Share feedback to help improve teaching and student support.</p>
+        <div class="grid">
+          <div class="card"><div class="metric-label">Sample Satisfaction Rating</div><div class="metric-value">4.2/5</div></div>
+          <div class="card"><div class="metric-label">Feedback Categories</div><div class="metric-value">5</div></div>
+          <div class="card"><div class="metric-label">Feedback Records</div><div id="feedbackCount" class="metric-value">0</div></div>
+          <div class="card"><div class="metric-label">Purpose</div><div class="metric-value" style="font-size:18px">Improvement</div></div>
+        </div>
+        <div class="card">
+          <h3>Submit Feedback</h3>
+          <form id="feedbackForm">
+            <label>Feedback Category</label>
+            <select id="feedbackCategory">
+              <option>Student Satisfaction</option><option>Faculty Feedback</option><option>Teaching Quality</option><option>Facilities</option><option>Academic Support</option><option>Placement Support</option>
+            </select>
+            <label>Rating</label>
+            <select id="feedbackRating">
+              <option value="5">5 - Excellent</option><option value="4">4 - Good</option><option value="3">3 - Average</option><option value="2">2 - Needs Improvement</option><option value="1">1 - Poor</option>
+            </select>
+            <label>Your Feedback</label>
+            <textarea id="feedbackText" rows="4" required placeholder="Share your feedback..."></textarea>
+            <button type="submit">Submit Feedback</button>
+          </form>
+        </div>
+        <div class="card"><h3>Submitted Feedback</h3><div id="feedbackList" class="muted">No feedback yet.</div></div>
+      </section>
+
+      <section id="record" class="page">
+        <h1>Record Attendance</h1>
+        <p>Mark each student's attendance by section. Submit the records for Management Analytics.</p>
+        <div class="card">
+          <div class="form-grid">
+            <div>
+              <label for="attSection">Select Section</label>
+              <select id="attSection" onchange="renderAttendanceRoster()">
+                <option value="A">AI &amp; DS - Section A</option>
+                <option value="B">AI &amp; DS - Section B</option>
+              </select>
+            </div>
+            <div>
+              <label for="attDate">Attendance Date</label>
+              <input id="attDate" type="date" required>
+            </div>
+            <div>
+              <label for="attSubject">Subject</label>
+              <select id="attSubject">
+                <option>Mathematics</option>
+                <option>Programming</option>
+                <option>Data Structures</option>
+                <option>Database Systems</option>
+                <option>Artificial Intelligence</option>
+              </select>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Student ID</th><th>Student Name</th><th>Present</th><th>Absent</th></tr></thead>
+              <tbody id="attendanceRoster"></tbody>
+            </table>
+          </div>
+          <p id="attendanceCount" class="muted">Select attendance for each student.</p>
+          <button type="button" onclick="submitSectionAttendance()">Submit Attendance</button>
+        </div>
+        <div class="card table-wrap">
+          <h3>Saved Attendance Records</h3>
+          <table>
+            <thead><tr><th>Date</th><th>Section</th><th>Student ID</th><th>Name</th><th>Subject</th><th>Status</th></tr></thead>
+            <tbody id="recordTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="summary" class="page">
+        <h1>Student Attendance Summary</h1>
+        <div class="card table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Present</th><th>Total Records</th><th>Percentage</th></tr></thead>
+            <tbody id="summaryTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="management" class="page">
+        <div class="heading">
+          <div><h1>Management Analytics</h1><p>College-level overview of student performance.</p></div>
+          <button onclick="exportCSV()">Export CSV</button>
+        </div>
+        <div class="grid">
+          <div class="card"><div class="metric-label">Students</div><div class="metric-value" id="totalStudents">6</div></div>
+          <div class="card"><div class="metric-label">Average CGPA</div><div class="metric-value" id="avgCGPA">8.62</div></div>
+          <div class="card"><div class="metric-label">Average Marks</div><div class="metric-value" id="avgMarks">82%</div></div>
+        </div>
+        <div class="card">
+          <h3>🔎 Student Details by Roll Number</h3>
+          <p class="muted">Enter a student's roll number, or click a student ID or name in the table below.</p>
+          <form id="studentSearchForm">
+            <label for="studentSearchInput">Student Roll Number</label>
+            <input id="studentSearchInput" placeholder="Example: S103" required>
+            <button type="submit">View Student Details</button>
+            <button type="button" onclick="clearStudentDetails()" style="background:#6b7280">Clear</button>
+          </form>
+          <div id="studentDetailsResult" class="hidden"></div>
+        </div>
+        <div class="card">
+          <h3>Academic Red-Flag Summary</h3>
+          <p class="muted">Students below the class average, with attendance below 75%, or with backlogs are flagged for review. Click a student's ID or name to see the details and reasons.</p>
+          <div id="redFlagSummary"></div>
+        </div>
+        <div class="card table-wrap">
+          <h3>Student Performance Overview</h3>
+          <table>
+            <thead><tr><th>Roll Number</th><th>Name</th><th>CGPA</th><th>Marks</th><th>Indicator</th></tr></thead>
+            <tbody id="managementTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <footer>Student Success Intelligence · Educational demonstration</footer>
+    </main>
+  </div>
+</div>
+
+<script>
+const students = [
+  {id:"S101",name:"Aarav",section:"A",cgpa:9.2,marks:88,attendance:94,backlogs:0},
+  {id:"S102",name:"Diya",section:"A",cgpa:8.7,marks:82,attendance:86,backlogs:0},
+  {id:"S103",name:"Rahul",section:"A",cgpa:7.5,marks:70,attendance:72,backlogs:1},
+  {id:"S104",name:"Priya",section:"B",cgpa:9.5,marks:93,attendance:96,backlogs:0},
+  {id:"S105",name:"Kiran",section:"B",cgpa:7.9,marks:76,attendance:79,backlogs:0},
+  {id:"S106",name:"Ananya",section:"B",cgpa:8.9,marks:84,attendance:88,backlogs:0}
+];
+
+const subjects = [
+  {name:"Mathematics",marks:88,present:27,total:30},
+  {name:"Programming",marks:92,present:28,total:30},
+  {name:"Data Structures",marks:81,present:24,total:30},
+  {name:"Database Systems",marks:85,present:26,total:30},
+  {name:"Artificial Intelligence",marks:79,present:25,total:30}
+];
+
+const API_TOKEN_KEY = "ssi_api_token";
+
+let currentUser = null;
+let activeAssessmentId = null;
+let activeSkillCategory = "";
+let assessmentCache = [];
+let submissionCache = [];
+
+async function api(path, options = {}) {
+  const token = localStorage.getItem(API_TOKEN_KEY);
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      "Content-Type":"application/json",
+      ...(token ? {Authorization:"Bearer " + token} : {}),
+      ...options.headers
+    }
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.detail || "The server request failed.");
+  return result;
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g,ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
+}
+
+/* LOGIN AND REGISTRATION */
+function setMode(mode) {
+  document.getElementById("loginForm").classList.toggle("hidden",mode !== "login");
+  document.getElementById("registerForm").classList.toggle("hidden",mode !== "register");
+  document.getElementById("loginTab").classList.toggle("active",mode === "login");
+  document.getElementById("registerTab").classList.toggle("active",mode === "register");
+}
+
+document.getElementById("regRole").addEventListener("change",function() {
+  const isStudent = this.value === "student";
+  document.getElementById("studentIdBox").classList.toggle("hidden",!isStudent);
+  document.getElementById("regStudentId").required = isStudent;
+});
+
+document.getElementById("registerForm").addEventListener("submit",function(e) {
+  const form = this;
+  registerAccount(e,form);
+});
+
+async function registerAccount(e,form) {
+  e.preventDefault();
+
+  const name = document.getElementById("regName").value.trim();
+  const email = document.getElementById("regEmail").value.trim().toLowerCase();
+  const role = document.getElementById("regRole").value;
+  const studentId = document.getElementById("regStudentId").value.trim().toUpperCase();
+  const password = document.getElementById("regPassword").value;
+
+  if (password !== document.getElementById("regConfirm").value) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  if (role === "student" && !students.some(s => s.id === studentId)) {
+    alert("Use a sample student ID from S101 to S106.");
+    return;
+  }
+
+  try {
+    await api("/api/auth/register",{
+      method:"POST",
+      body:JSON.stringify({name,email,role,studentId,password})
+    });
+    alert("Registration successful! Please log in.");
+    document.getElementById("loginEmail").value = email;
+    document.getElementById("loginPassword").value = "";
+    form.reset();
+    document.getElementById("regRole").value = "student";
+    document.getElementById("studentIdBox").classList.remove("hidden");
+    document.getElementById("regStudentId").required = true;
+    setMode("login");
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+document.getElementById("loginForm").addEventListener("submit",function(e) {
+  loginAccount(e,this);
+});
+
+async function loginAccount(e,form) {
+  e.preventDefault();
+
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const result = await api("/api/auth/login",{
+      method:"POST",
+      body:JSON.stringify({email,password})
+    });
+    localStorage.setItem(API_TOKEN_KEY,result.token);
+    currentUser = result.user;
+    document.getElementById("authScreen").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    document.getElementById("welcome").textContent = currentUser.name + " ";
+
+    configureMenu();
+    await renderAll();
+    showPage("dashboard",document.querySelector('[data-page="dashboard"]'));
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+function logout() {
+  currentUser = null;
+  activeAssessmentId = null;
+  localStorage.removeItem(API_TOKEN_KEY);
+  document.getElementById("app").classList.add("hidden");
+  document.getElementById("authScreen").classList.remove("hidden");
+  document.getElementById("loginForm").reset();
+  setMode("login");
+}
+
+/* ONLY CHANGE: MANAGEMENT MENU */
+function configureMenu() {
+  const allowed = {
+    student:["dashboard","academics","attendance","lms","engagement","placement","skills","feedback"],
+    teacher:["dashboard","record","summary"],
+    management:["dashboard","management","summary"]
+  };
+
+  document.querySelectorAll("#sidebar button").forEach(button => {
+    button.classList.toggle("hidden",!allowed[currentUser.role].includes(button.dataset.page));
+  });
+
+  document.getElementById("roleBadge").textContent =
+    currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1) + " View";
+
+  document.getElementById("managementAssessmentTools").classList.toggle("hidden",currentUser.role !== "management");
+  document.getElementById("studentAssessmentArea").classList.toggle("hidden",currentUser.role !== "student");
+  document.getElementById("studentResultsCard").classList.toggle("hidden",currentUser.role !== "student");
+
+  buildQuestionInputs();
+}
+
+function showPage(id,button) {
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("active",p.id === id));
+  document.querySelectorAll("#sidebar button").forEach(b => b.classList.toggle("active",b === button));
+
+  if (id === "summary") renderSummary();
+  if (id === "management") {
+    renderManagement();
+    clearStudentDetails();
+  }
+  if (id === "record") {
+    renderRecords();
+    renderAttendanceRoster();
+  }
+  if (id === "feedback") renderFeedback();
+  if (id === "skills") {
+    renderAssessments();
+    closeSkillTests();
+  }
+  if (id === "engagement") closeEngagement();
+}
+
+function getStudent() {
+  if (currentUser && currentUser.role === "student") {
+    return students.find(s => s.id === currentUser.studentId) || students[0];
+  }
+  return students[0];
+}
+
+function renderDashboard() {
+  const s = getStudent();
+  [
+    ["cgpa",s.cgpa.toFixed(2)],
+    ["marks",s.marks+"%"],
+    ["attendanceValue",s.attendance+"%"],
+    ["backlogs",s.backlogs],
+    ["academicCGPA",s.cgpa.toFixed(2)],
+    ["academicMarks",s.marks+"%"],
+    ["academicBacklogs",s.backlogs],
+    ["overallAttendance",s.attendance+"%"],
+    ["attendanceStatus",s.attendance >= 75 ? "On Track" : "Needs Review"]
+  ].forEach(([id,value]) => {
+    document.getElementById(id).textContent = value;
+  });
+
+  const needsReview = s.attendance < 75 || s.marks < 60 || s.backlogs > 0;
+  document.getElementById("risk").className = "status " + (needsReview ? "warning" : "good");
+  document.getElementById("risk").textContent = needsReview ? "Review recommended" : "Progress looks positive";
+  document.getElementById("insight").textContent = needsReview
+    ? "Consider discussing attendance or assessment results with a teacher to identify useful support."
+    : "Keep practising regularly, attending classes, and asking for help when needed.";
+}
+
+function renderSubjects() {
+  document.getElementById("subjectTable").innerHTML = subjects.map(s => `
+    <tr>
+      <td>${escapeHTML(s.name)}</td>
+      <td>${s.marks}%</td>
+      <td><div class="progress"><span style="width:${s.marks}%"></span></div></td>
+      <td><span class="status ${s.marks >= 80 ? "good" : "warning"}">${s.marks >= 80 ? "Strong" : "Developing"}</span></td>
+    </tr>
+  `).join("");
+
+  document.getElementById("attendanceTable").innerHTML = subjects.map(s => {
+    const pct = Math.round(s.present / s.total * 100);
+    return `
+      <tr>
+        <td>${escapeHTML(s.name)}</td><td>${s.present}</td><td>${s.total}</td><td>${pct}%</td>
+        <td><span class="status ${pct >= 75 ? "good" : "warning"}">${pct >= 75 ? "On Track" : "Below Target"}</span></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+async function renderAttendanceRoster() {
+  const sectionElement = document.getElementById("attSection");
+  if (!sectionElement) return;
+
+  const section = sectionElement.value;
+  const roster = students.filter(s => s.section === section);
+  const date = document.getElementById("attDate").value;
+  const subject = document.getElementById("attSubject").value;
+  let records = [];
+  if (currentUser) {
+    try {
+      records = await api("/api/attendance");
+    } catch (error) {
+      alert(error.message);
+      return;
+    }
+  }
+
+  document.getElementById("attendanceRoster").innerHTML = roster.map(s => {
+    const existing = records.find(r =>
+      r.studentId === s.id && r.date === date &&
+      r.subject === subject && r.section === section
+    );
+
+    return `
+      <tr>
+        <td>${escapeHTML(s.id)}</td><td>${escapeHTML(s.name)}</td>
+        <td><label class="option-label"><input type="radio" name="attendance_${s.id}" value="Present" ${existing?.status === "Present" ? "checked" : ""} onchange="updateAttendanceCount()"> Present</label></td>
+        <td><label class="option-label"><input type="radio" name="attendance_${s.id}" value="Absent" ${existing?.status === "Absent" ? "checked" : ""} onchange="updateAttendanceCount()"> Absent</label></td>
+      </tr>
+    `;
+  }).join("");
+
+  updateAttendanceCount();
+}
+
+function updateAttendanceCount() {
+  const section = document.getElementById("attSection").value;
+  const roster = students.filter(s => s.section === section);
+  let marked = 0, present = 0;
+
+  roster.forEach(s => {
+    const selected = document.querySelector(`input[name="attendance_${s.id}"]:checked`);
+    if (selected) {
+      marked++;
+      if (selected.value === "Present") present++;
+    }
+  });
+
+  document.getElementById("attendanceCount").textContent =
+    `${marked} of ${roster.length} students marked · ${present} present · ${marked-present} absent`;
+}
+
+document.getElementById("attDate").addEventListener("change",renderAttendanceRoster);
+document.getElementById("attSubject").addEventListener("change",renderAttendanceRoster);
+
+async function submitSectionAttendance() {
+  if (!currentUser || !["teacher","management"].includes(currentUser.role)) {
+    alert("Only teachers or management can submit attendance.");
+    return;
+  }
+
+  const section = document.getElementById("attSection").value;
+  const date = document.getElementById("attDate").value;
+  const subject = document.getElementById("attSubject").value;
+  const roster = students.filter(s => s.section === section);
+
+  if (!date) {
+    alert("Please select an attendance date.");
+    return;
+  }
+
+  const selectedRecords = [];
+
+  for (const student of roster) {
+    const selected = document.querySelector(`input[name="attendance_${student.id}"]:checked`);
+    if (!selected) {
+      alert(`Please mark Present or Absent for ${student.name}.`);
+      return;
+    }
+
+    selectedRecords.push({studentId:student.id,status:selected.value});
+  }
+
+  try {
+    await api("/api/attendance",{
+      method:"POST",
+      body:JSON.stringify({section,date,subject,records:selectedRecords})
+    });
+    await renderRecords();
+    await renderSummary();
+    renderManagement();
+    await renderAttendanceRoster();
+    alert("Attendance submitted successfully.");
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function renderRecords() {
+  let records;
+  try {
+    records = currentUser ? await api("/api/attendance") : [];
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+  document.getElementById("recordTable").innerHTML = records.length
+    ? records.slice().reverse().map(r => {
+        const student = students.find(s => s.id === r.studentId);
+        return `<tr>
+          <td>${escapeHTML(r.date)}</td>
+          <td>${escapeHTML(r.section || student?.section || "-")}</td>
+          <td>${escapeHTML(r.studentId)}</td>
+          <td>${escapeHTML(r.studentName || student?.name || "-")}</td>
+          <td>${escapeHTML(r.subject)}</td>
+          <td><span class="status ${r.status === "Present" ? "good" : "danger"}">${escapeHTML(r.status)}</span></td>
+        </tr>`;
+      }).join("")
+    : '<tr><td colspan="6">No attendance records yet.</td></tr>';
+}
+
+async function renderSummary() {
+  let records;
+  try {
+    records = currentUser ? await api("/api/attendance") : [];
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+  document.getElementById("summaryTable").innerHTML = students.map(s => {
+    const own = records.filter(r => r.studentId === s.id);
+    const present = own.filter(r => r.status === "Present").length;
+    return `<tr>
+      <td>${escapeHTML(s.id)}</td><td>${escapeHTML(s.name)}</td>
+      <td>${present}</td><td>${own.length}</td>
+      <td>${own.length ? Math.round(present / own.length * 100) + "%" : "No records"}</td>
+    </tr>`;
+  }).join("");
+}
+
+document.getElementById("feedbackForm").addEventListener("submit",async function(e) {
+  e.preventDefault();
+  try {
+    await api("/api/feedback",{
+      method:"POST",
+      body:JSON.stringify({
+        category:document.getElementById("feedbackCategory").value,
+        rating:Number(document.getElementById("feedbackRating").value),
+        message:document.getElementById("feedbackText").value.trim()
+      })
+    });
+    this.reset();
+    await renderFeedback();
+    alert("Feedback submitted successfully.");
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+async function renderFeedback() {
+  let feedback = [];
+  if (currentUser) {
+    try {
+      feedback = await api("/api/feedback");
+    } catch (error) {
+      alert(error.message);
+      return;
+    }
+  }
+
+  document.getElementById("feedbackCount").textContent = feedback.length;
+  document.getElementById("feedbackList").innerHTML = feedback.length
+    ? feedback.slice().reverse().map(f => `
+      <div style="padding:12px 0;border-bottom:1px solid #e3e8f2">
+        <b>${escapeHTML(f.category)}</b> · Rating: ${escapeHTML(f.rating)}/5
+        <p>${escapeHTML(f.message)}</p>
+        <small>${escapeHTML(f.name)} · ${escapeHTML(f.date)}</small>
+      </div>`).join("")
+    : "No feedback submitted yet.";
+}
+
+function getStudentFlagReasons(student) {
+  const averageMarks = students.reduce((sum,s) => sum + s.marks,0) / students.length;
+  const averageCGPA = students.reduce((sum,s) => sum + s.cgpa,0) / students.length;
+  const reasons = [];
+
+  if (student.marks < averageMarks) reasons.push(`Marks are ${student.marks}%, below the class average of ${averageMarks.toFixed(1)}%.`);
+  if (student.cgpa < averageCGPA) reasons.push(`CGPA is ${student.cgpa.toFixed(2)}, below the class average of ${averageCGPA.toFixed(2)}.`);
+  if (student.attendance < 75) reasons.push(`Attendance is ${student.attendance}%, below the required 75%.`);
+  if (student.backlogs > 0) reasons.push(`The student has ${student.backlogs} pending backlog${student.backlogs === 1 ? "" : "s"}.`);
+  return reasons;
+}
+
+function renderManagement() {
+  const average = key => students.reduce((sum,s) => sum + s[key],0) / students.length;
+  const averageCGPA = average("cgpa");
+  const averageMarks = average("marks");
+
+  document.getElementById("totalStudents").textContent = students.length;
+  document.getElementById("avgCGPA").textContent = averageCGPA.toFixed(2);
+  document.getElementById("avgMarks").textContent = Math.round(averageMarks) + "%";
+
+  let flaggedCount = 0;
+  document.getElementById("managementTable").innerHTML = students.map(s => {
+    const reasons = getStudentFlagReasons(s);
+    const flagged = reasons.length > 0;
+    if (flagged) flaggedCount++;
+
+    return `<tr class="${flagged ? "red-flag-row" : ""}">
+      <td><button type="button" class="student-link" onclick="viewStudentDetails('${escapeHTML(s.id)}')">${escapeHTML(s.id)}</button></td>
+      <td><button type="button" class="student-link" onclick="viewStudentDetails('${escapeHTML(s.id)}')">${escapeHTML(s.name)}</button></td>
+      <td>${s.cgpa.toFixed(2)}</td><td>${s.marks}%</td>
+      <td>${flagged
+        ? `<span class="status danger">🚩 Red Flag</span><p class="red-flag-text">${escapeHTML(reasons.join(" "))}</p>`
+        : '<span class="status good">On Track</span>'}</td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("redFlagSummary").innerHTML = `
+    <div class="grid">
+      <div class="card"><div class="metric-label">Students Flagged for Review</div><div class="metric-value" style="color:${flaggedCount ? "var(--red)" : "var(--green)"}">${flaggedCount}</div></div>
+      <div class="card"><div class="metric-label">Class Average CGPA</div><div class="metric-value">${averageCGPA.toFixed(2)}</div></div>
+      <div class="card"><div class="metric-label">Class Average Marks</div><div class="metric-value">${averageMarks.toFixed(1)}%</div></div>
+    </div>
+    <p class="muted">Red flags are review indicators based on the sample data, not final judgments about a student.</p>`;
+}
+
+document.getElementById("studentSearchForm").addEventListener("submit",function(e) {
+  e.preventDefault();
+  viewStudentDetails(document.getElementById("studentSearchInput").value.trim().toUpperCase());
+});
+
+async function viewStudentDetails(rollNumber) {
+  if (!currentUser || !["teacher","management"].includes(currentUser.role)) {
+    alert("Student detail search is available to teachers and management.");
+    return;
+  }
+
+  const id = String(rollNumber).trim().toUpperCase();
+  const student = students.find(s => s.id.toUpperCase() === id);
+  const result = document.getElementById("studentDetailsResult");
+  result.classList.remove("hidden");
+
+  if (!student) {
+    result.innerHTML = `<div class="flag-reason">
+      No student was found with roll number <b>${escapeHTML(id)}</b>.
+      Please check the roll number and try again.
+      <p>Demo roll numbers: S101, S102, S103, S104, S105 and S106.</p>
+    </div>`;
+    return;
+  }
+
+  document.getElementById("studentSearchInput").value = student.id;
+  const reasons = getStudentFlagReasons(student);
+  const flagged = reasons.length > 0;
+  let submissions, records;
+  try {
+    const result = await api("/api/assessments");
+    submissions = result.submissions.filter(sub => sub.studentId === student.id);
+    records = (await api("/api/attendance")).filter(record => record.studentId === student.id);
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+  const recordedPresent = records.filter(r => r.status === "Present").length;
+  const recordedAttendance = records.length ? Math.round(recordedPresent / records.length * 100) : null;
+
+  const submissionRows = submissions.length
+    ? submissions.slice().reverse().map(sub => `<tr>
+        <td>${escapeHTML(sub.title || "Assessment")}</td>
+        <td>${sub.score} / ${sub.total}</td>
+        <td>${sub.total ? Math.round(sub.score / sub.total * 100) + "%" : "—"}</td>
+        <td>${escapeHTML(formatDate(sub.submittedAt))}</td>
+      </tr>`).join("")
+    : '<tr><td colspan="4">No submitted assessments found for this student.</td></tr>';
+
+  result.innerHTML = `
+    <div class="card" style="margin-top:18px">
+      <div class="heading">
+        <div><h2>${escapeHTML(student.name)}</h2>
+        <p>Roll Number: <b>${escapeHTML(student.id)}</b> · Section ${escapeHTML(student.section)}</p></div>
+        <span class="status ${flagged ? "danger" : "good"}">${flagged ? "🚩 Red Flag" : "On Track"}</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item"><div class="metric-label">CGPA</div><div class="metric-value">${student.cgpa.toFixed(2)}</div></div>
+        <div class="detail-item"><div class="metric-label">Average Marks</div><div class="metric-value">${student.marks}%</div></div>
+        <div class="detail-item"><div class="metric-label">Backlogs</div><div class="metric-value">${student.backlogs}</div></div>
+        <div class="detail-item"><div class="metric-label">Attendance (sample data)</div><div class="metric-value">${student.attendance}%</div></div>
+        <div class="detail-item"><div class="metric-label">Assessments Submitted</div><div class="metric-value">${submissions.length}</div></div>
+        <div class="detail-item"><div class="metric-label">Attendance Records</div><div class="metric-value">${records.length}</div></div>
+      </div>
+      <h3 style="margin-top:24px">🚩 Red-Flag Reasons</h3>
+      ${flagged ? reasons.map(reason => `<div class="flag-reason">${escapeHTML(reason)}</div>`).join("") : '<div class="info-line">No red flags identified from the current sample data.</div>'}
+      <h3 style="margin-top:24px">📊 Assessment Marks</h3>
+      <p class="muted">Assessment scores below are taken from tests submitted through this demo. If the student has not submitted a test, no result will appear.</p>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Assessment</th><th>Score</th><th>Percentage</th><th>Submitted At</th></tr></thead>
+        <tbody>${submissionRows}</tbody>
+      </table></div>
+      <h3 style="margin-top:24px">📅 Recorded Attendance</h3>
+      <p class="muted">Attendance records submitted in this demo: ${records.length}. Present: ${recordedPresent}. Absent: ${records.length - recordedPresent}. Recorded percentage: ${recordedAttendance === null ? "No records yet" : recordedAttendance + "%"}.</p>
+      <p class="note">The sample attendance percentage displayed above is part of the initial demo data. The recorded percentage is calculated separately from attendance submitted in this browser.</p>
+    </div>`;
+  result.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function clearStudentDetails() {
+  const input = document.getElementById("studentSearchInput");
+  const result = document.getElementById("studentDetailsResult");
+  if (input) input.value = "";
+  if (result) {
+    result.innerHTML = "";
+    result.classList.add("hidden");
+  }
+}
+
+function exportCSV() {
+  if (!currentUser || currentUser.role !== "management") {
+    alert("CSV export is available to management accounts.");
+    return;
+  }
+
+  const rows = [
+    ["Student ID","Name","Section","CGPA","Marks","Attendance","Backlogs"],
+    ...students.map(s => [s.id,s.name,s.section,s.cgpa,s.marks,s.attendance,s.backlogs])
+  ];
+  const csv = rows.map(row => row.map(v => '"' + String(v).replace(/"/g,'""') + '"').join(",")).join("\r\n");
+  const url = URL.createObjectURL(new Blob(["\uFEFF" + csv],{type:"text/csv;charset=utf-8;"}));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "student_success_report.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function setToday() {
+  document.getElementById("attDate").value = new Date().toISOString().slice(0,10);
+}
+
+const engagementData = {
+  events:{title:"College Events",description:"Workshops, seminars and student activities.",items:[
+    ["AI Workshop","Learn introductory AI concepts and applications.","Workshop"],
+    ["Technical Seminar","Explore current technology trends with speakers.","Seminar"],
+    ["Project Expo","Present projects and discover other student ideas.","Exhibition"],
+    ["Communication Workshop","Practise presentations and communication skills.","Workshop"]
+  ]},
+  clubs:{title:"Student Clubs",description:"Explore communities and practise your interests.",items:[
+    ["Coding Club","Solve programming problems and practise coding.","Technical"],
+    ["AI Club","Explore machine learning and data science projects.","Technical"],
+    ["Literary Club","Take part in writing, reading and speaking activities.","Creative"],
+    ["Cultural Club","Participate in cultural programmes and teamwork.","Cultural"]
+  ]},
+  hackathons:{title:"Hackathons",description:"Build solutions with a team and learn by doing.",items:[
+    ["College Hackathon","Develop a prototype for a campus challenge.","Team event"],
+    ["AI Innovation Challenge","Create a solution using AI or data science.","Innovation"],
+    ["Smart India Hackathon Practice","Practise presenting and developing problem solutions.","Practice"]
+  ]},
+  certifications:{title:"Certifications",description:"Suggested learning paths for building skills.",items:[
+    ["Python Programming","Practise Python fundamentals and problem solving.","Programming"],
+    ["Web Development","Learn HTML, CSS and JavaScript basics.","Web"],
+    ["Artificial Intelligence","Study introductory AI and machine learning.","AI"]
+  ]}
+};
+
+function openEngagement(category) {
+  const data = engagementData[category];
+  if (!data) return;
+  document.getElementById("engagementCategories").classList.add("hidden");
+  document.getElementById("engagementDetails").classList.remove("hidden");
+  document.getElementById("engagementTitle").textContent = data.title;
+  document.getElementById("engagementDescription").textContent = data.description;
+  document.getElementById("engagementItems").innerHTML = data.items.map(item => `
+    <div class="card"><span class="status good">${escapeHTML(item[2])}</span>
+    <h3>${escapeHTML(item[0])}</h3><p>${escapeHTML(item[1])}</p></div>`).join("");
+}
+
+function closeEngagement() {
+  document.getElementById("engagementCategories").classList.remove("hidden");
+  document.getElementById("engagementDetails").classList.add("hidden");
+}
+
+function buildQuestionInputs() {
+  const container = document.getElementById("questionInputs");
+  container.innerHTML = "";
+  for (let i = 1; i <= 3; i++) {
+    container.innerHTML += `
+      <div class="question-box"><h3>Question ${i}</h3>
+      <label>Question text</label><input id="q${i}Text" required placeholder="Type question ${i}">
+      <label>Options (separate each option with a comma)</label><input id="q${i}Options" required placeholder="Option A, Option B, Option C, Option D">
+      <label>Correct answer (must exactly match one option)</label><input id="q${i}Answer" required placeholder="Enter the correct option"></div>`;
+  }
+}
+
+document.getElementById("createAssessmentForm").addEventListener("submit",async function(e) {
+  e.preventDefault();
+  if (!currentUser || currentUser.role !== "management") {
+    alert("Only management can publish assessments.");
+    return;
+  }
+
+  const title = document.getElementById("testTitle").value.trim();
+  const description = document.getElementById("testDescription").value.trim();
+  const deadline = document.getElementById("testDeadline").value;
+
+  if (new Date(deadline).getTime() <= Date.now()) {
+    alert("Choose a future submission deadline.");
+    return;
+  }
+
+  const questions = [];
+  for (let i = 1; i <= 3; i++) {
+    const question = document.getElementById("q" + i + "Text").value.trim();
+    const options = document.getElementById("q" + i + "Options").value.split(",").map(x => x.trim()).filter(Boolean);
+    const answer = document.getElementById("q" + i + "Answer").value.trim();
+
+    if (options.length < 2) {
+      alert("Please provide at least two options for Question " + i + ".");
+      return;
+    }
+    if (new Set(options).size !== options.length) {
+      alert("Please remove duplicate options from Question " + i + ".");
+      return;
+    }
+    if (!options.includes(answer)) {
+      alert("The correct answer for Question " + i + " must exactly match one of its options.");
+      return;
+    }
+    questions.push({question,options,answer});
+  }
+
+  try {
+    await api("/api/assessments",{
+      method:"POST",
+      body:JSON.stringify({title,description,deadline,questions})
+    });
+    this.reset();
+    buildQuestionInputs();
+    await renderAssessments();
+    alert("Assessment published successfully.");
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+function isPastDeadline(a) {
+  return Date.now() > new Date(a.deadline).getTime();
+}
+
+function formatDate(value) {
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? "Invalid date" : d.toLocaleString();
+}
+
+function getMySubmission(id) {
+  return submissionCache.find(s => s.assessmentId === id && s.email === currentUser.email);
+}
+
+async function renderAssessments() {
+  let assessments;
+  try {
+    const result = await api("/api/assessments");
+    assessments = assessmentCache = result.assessments;
+    submissionCache = result.submissions;
+  } catch (error) {
+    alert(error.message);
+    return;
+  }
+
+  if (currentUser && currentUser.role === "management") {
+    const target = document.getElementById("managementAssessmentList");
+    target.innerHTML = assessments.length
+      ? assessments.slice().reverse().map(a => {
+          const submissions = submissionCache.filter(s => s.assessmentId === a.id);
+          return `<div class="question-box"><h3>${escapeHTML(a.title)}</h3>
+            <p>${escapeHTML(a.description)}</p>
+            <div class="info-line">Deadline: <b>${escapeHTML(formatDate(a.deadline))}</b></div>
+            <p class="muted">Created by ${escapeHTML(a.createdBy)} · ${a.questions.length} questions · ${isPastDeadline(a) ? "Deadline passed" : "Open for submissions"}</p>
+            <h4>Student submissions (${submissions.length})</h4>
+            ${submissions.length ? `<div class="table-wrap"><table><thead><tr><th>Student</th><th>Email</th><th>Score</th><th>Submitted At</th></tr></thead><tbody>
+            ${submissions.map(s => `<tr><td>${escapeHTML(s.studentName)}</td><td>${escapeHTML(s.email)}</td><td>${s.score}/${s.total}</td><td>${escapeHTML(formatDate(s.submittedAt))}</td></tr>`).join("")}
+            </tbody></table></div>` : "<p class='muted'>No submissions yet.</p>"}</div>`;
+        }).join("")
+      : "<p>No assessments posted yet. Use the form above to create one.</p>";
+  }
+
+  if (currentUser && currentUser.role === "student") {
+    const target = document.getElementById("studentAssessmentList");
+    target.innerHTML = assessments.length
+      ? assessments.slice().reverse().map(a => {
+          const submission = getMySubmission(a.id);
+          const expired = isPastDeadline(a);
+          const state = submission
+            ? `<span class="status good">Submitted · ${submission.score}/${submission.total}</span>`
+            : expired ? '<span class="status danger">Deadline passed</span>'
+            : '<span class="status warning">Not submitted</span>';
+          const action = submission || expired ? "" : `<button onclick="startAssessment('${a.id}')">Open Test</button>`;
+          return `<div class="question-box"><h3>${escapeHTML(a.title)}</h3>
+            <p>${escapeHTML(a.description)}</p>
+            <div class="info-line">📅 Submission deadline: <b>${escapeHTML(formatDate(a.deadline))}</b></div>
+            <p class="muted">${a.questions.length} questions · Posted by ${escapeHTML(a.createdBy)}</p>
+            ${state}<p>${action}</p></div>`;
+        }).join("")
+      : "<p>No assessments have been posted yet. Check again later.</p>";
+
+    const submissions = submissionCache;
+    document.getElementById("studentResults").innerHTML = submissions.length
+      ? `<div class="table-wrap"><table><thead><tr><th>Assessment</th><th>Score</th><th>Submitted at</th></tr></thead><tbody>
+      ${submissions.map(s => `<tr><td>${escapeHTML(s.title)}</td><td>${s.score}/${s.total}</td><td>${escapeHTML(formatDate(s.submittedAt))}</td></tr>`).join("")}
+      </tbody></table></div>`
+      : "<p>You have not submitted any assessments yet.</p>";
+  }
+}
+
+function startAssessment(id) {
+  const assessment = assessmentCache.find(a => a.id === id);
+  if (!assessment) return;
+  if (!currentUser || currentUser.role !== "student") {
+    alert("Only students can take assessments.");
+    return;
+  }
+  if (getMySubmission(id)) {
+    alert("You have already submitted this assessment.");
+    return;
+  }
+  if (isPastDeadline(assessment)) {
+    alert("The submission deadline has passed.");
+    renderAssessments();
+    return;
+  }
+
+  activeAssessmentId = id;
+  document.getElementById("takeAssessmentCard").classList.remove("hidden");
+  document.getElementById("takeTestTitle").textContent = assessment.title;
+  document.getElementById("takeTestDescription").textContent = assessment.description;
+  document.getElementById("takeTestDeadline").textContent = "Submission deadline: " + formatDate(assessment.deadline);
+  document.getElementById("testQuestions").innerHTML = assessment.questions.map((q,i) => `
+    <div class="question-box"><h3>Question ${i+1}</h3><p>${escapeHTML(q.question)}</p>
+    ${q.options.map(option => `<label class="option-label"><input type="radio" name="answer${i}" value="${escapeHTML(option)}" required> ${escapeHTML(option)}</label>`).join("")}</div>
+  `).join("");
+  document.getElementById("takeAssessmentCard").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function cancelAssessment() {
+  activeAssessmentId = null;
+  document.getElementById("takeAssessmentCard").classList.add("hidden");
+  document.getElementById("takeAssessmentForm").reset();
+}
+
+document.getElementById("takeAssessmentForm").addEventListener("submit",async function(e) {
+  e.preventDefault();
+  if (!currentUser || currentUser.role !== "student" || !activeAssessmentId) return;
+
+  const assessment = assessmentCache.find(a => a.id === activeAssessmentId);
+  if (!assessment) {
+    alert("This assessment could not be found.");
+    cancelAssessment();
+    return;
+  }
+  if (isPastDeadline(assessment)) {
+    alert("The deadline has passed. Your answers were not submitted.");
+    cancelAssessment();
+    renderAssessments();
+    return;
+  }
+  if (getMySubmission(assessment.id)) {
+    alert("You have already submitted this assessment.");
+    cancelAssessment();
+    renderAssessments();
+    return;
+  }
+
+  const answers = assessment.questions.map((q,i) => {
+    const chosen = this.querySelector(`input[name="answer${i}"]:checked`);
+    return chosen ? chosen.value : "";
+  });
+
+  try {
+    const result = await api(`/api/assessments/${encodeURIComponent(assessment.id)}/submissions`,{
+      method:"POST",
+      body:JSON.stringify({answers})
+    });
+    cancelAssessment();
+    await renderAssessments();
+    alert("Assessment submitted successfully! Your score is " + result.score + "/" + result.total + ".");
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+const skillTestData = {
+  mock:[
+    {title:"Aptitude Mock Test",description:"Practise basic quantitative aptitude.",questions:[
+      {q:"What is 20% of 150?",options:["20","25","30","35"],answer:"30"},
+      {q:"Find the next number: 2, 4, 8, 16, ?",options:["20","24","30","32"],answer:"32"},
+      {q:"If 5 pens cost ₹50, what is the cost of 1 pen?",options:["₹5","₹10","₹15","₹20"],answer:"₹10"}
+    ]},
+    {title:"Technical Mock Test",description:"Test your basic computer science knowledge.",questions:[
+      {q:"Which language is commonly used for web page structure?",options:["HTML","SQL","C","Bash"],answer:"HTML"},
+      {q:"Which data structure follows FIFO?",options:["Stack","Queue","Tree","Graph"],answer:"Queue"},
+      {q:"What does CPU stand for?",options:["Central Processing Unit","Computer Power Utility","Central Program User","Control Processing User"],answer:"Central Processing Unit"}
+    ]}
+  ],
+  coding:[
+    {title:"Python Basics",description:"Answer beginner-level Python questions.",questions:[
+      {q:"Which keyword defines a function in Python?",options:["function","define","def","fun"],answer:"def"},
+      {q:"What is the output of print(2 + 3)?",options:["23","5","2 + 3","Error"],answer:"5"},
+      {q:"Which type stores key-value pairs in Python?",options:["List","Tuple","Dictionary","String"],answer:"Dictionary"}
+    ]},
+    {title:"Programming Logic",description:"Practise fundamental coding concepts.",questions:[
+      {q:"Which loop repeats while a condition is true?",options:["if","while","switch","break"],answer:"while"},
+      {q:"Which operator checks strict equality in JavaScript?",options:["=","===","+=","&&"],answer:"==="},
+      {q:"What is the result of 10 % 3?",options:["0","1","2","3"],answer:"1"}
+    ]}
+  ],
+  aptitude:[
+    {title:"Numerical Aptitude Test",description:"Practise percentages, averages and basic mathematics.",questions:[
+      {q:"What is 25% of 200?",options:["25","40","50","75"],answer:"50"},
+      {q:"What is the average of 10, 20 and 30?",options:["15","20","25","30"],answer:"20"},
+      {q:"If 5 pens cost ₹60, what is the cost of 2 pens?",options:["₹12","₹18","₹24","₹30"],answer:"₹24"},
+      {q:"Find the next number: 3, 6, 12, 24, ?",options:["30","36","48","60"],answer:"48"},
+      {q:"A student scores 80 out of 100. What is the percentage?",options:["60%","70%","80%","90%"],answer:"80%"}
+    ]},
+    {title:"Logical Reasoning Test",description:"Practise number patterns and logical thinking.",questions:[
+      {q:"Find the next number: 2, 5, 8, 11, ?",options:["12","13","14","15"],answer:"14"},
+      {q:"Which one is different?",options:["Apple","Mango","Carrot","Banana"],answer:"Carrot"},
+      {q:"If all roses are flowers, which statement is correct?",options:["All flowers are roses","Roses are flowers","No roses are flowers","All roses are trees"],answer:"Roses are flowers"},
+      {q:"Find the next number: 1, 4, 9, 16, ?",options:["20","24","25","36"],answer:"25"},
+      {q:"If today is Monday, what day will it be after 3 days?",options:["Tuesday","Wednesday","Thursday","Friday"],answer:"Thursday"}
+    ]}
+  ]
+};
+
+function openSkillTests(category) {
+  activeSkillCategory = category;
+  document.getElementById("skillTestCategories").classList.add("hidden");
+  document.getElementById("skillTestDetails").classList.remove("hidden");
+  document.getElementById("skillTestWorkspace").classList.add("hidden");
+  document.getElementById("skillTestTitle").textContent =
+    category === "mock" ? "📝 Mock Tests" : category === "coding" ? "💻 Coding Tests" : "🧮 Aptitude Tests";
+  document.getElementById("skillTestDescription").textContent =
+    category === "mock" ? "Choose a mock test to practise aptitude and technical concepts." :
+    category === "coding" ? "Choose a coding test to practise programming fundamentals." :
+    "Choose an aptitude test to practise numerical ability and logical reasoning.";
+  renderSkillTestList();
+}
+
+function renderSkillTestList() {
+  const tests = skillTestData[activeSkillCategory] || [];
+  const icon = activeSkillCategory === "mock" ? "📝" : activeSkillCategory === "coding" ? "💻" : "🧮";
+  document.getElementById("skillTestList").innerHTML = tests.map((test,index) => `
+    <div class="card click-card"><div class="activity-icon">${icon}</div>
+    <h3>${escapeHTML(test.title)}</h3><p>${escapeHTML(test.description)}</p>
+    <p class="muted">${test.questions.length} questions</p>
+    <button type="button" onclick="startSkillTest(${index})">Start Test →</button></div>
+  `).join("");
+}
+
+function startSkillTest(index) {
+  const test = (skillTestData[activeSkillCategory] || [])[index];
+  if (!test) return;
+  document.getElementById("skillTestDetails").classList.add("hidden");
+  document.getElementById("skillTestWorkspace").classList.remove("hidden");
+  document.getElementById("workspaceTitle").textContent = test.title;
+  document.getElementById("workspaceDescription").textContent = test.description;
+
+  const questionsHTML = test.questions.map((q,i) => `
+    <div class="question-box"><h3>Question ${i+1}</h3><p>${escapeHTML(q.q)}</p>
+    ${q.options.map(option => `<label class="option-label"><input type="radio" name="skillAnswer${i}" value="${escapeHTML(option)}" required> ${escapeHTML(option)}</label>`).join("")}</div>
+  `).join("");
+
+  document.getElementById("workspaceContent").innerHTML = `
+    <form id="skillTestForm">${questionsHTML}<button type="submit">Submit Answers</button></form>
+    <div id="skillTestResult" class="info-line hidden"></div>`;
+
+  document.getElementById("skillTestForm").addEventListener("submit",function(e) {
+    e.preventDefault();
+    let score = 0;
+    test.questions.forEach((q,i) => {
+      const selected = this.querySelector(`input[name="skillAnswer${i}"]:checked`);
+      if (selected && selected.value === q.answer) score++;
+    });
+    const result = document.getElementById("skillTestResult");
+    result.classList.remove("hidden");
+    result.textContent = "Test completed! Your score: " + score + " / " + test.questions.length;
+    this.querySelectorAll("input,button").forEach(el => el.disabled = true);
+  });
+  document.getElementById("skillTestWorkspace").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function closeTestWorkspace() {
+  document.getElementById("skillTestWorkspace").classList.add("hidden");
+  document.getElementById("skillTestDetails").classList.remove("hidden");
+}
+
+function closeSkillTests() {
+  activeSkillCategory = "";
+  document.getElementById("skillTestCategories").classList.remove("hidden");
+  document.getElementById("skillTestDetails").classList.add("hidden");
+  document.getElementById("skillTestWorkspace").classList.add("hidden");
+}
+
+async function renderAll() {
+  renderDashboard();
+  renderSubjects();
+  await renderRecords();
+  await renderSummary();
+  renderManagement();
+  await renderFeedback();
+  await renderAssessments();
+  setToday();
+  await renderAttendanceRoster();
+}
+
+renderSubjects();
+setToday();
+renderAttendanceRoster();
+</script>
+</body>
+</html>
